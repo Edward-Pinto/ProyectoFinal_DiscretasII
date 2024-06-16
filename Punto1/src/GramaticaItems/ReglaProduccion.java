@@ -48,6 +48,10 @@ public class ReglaProduccion {
                 System.out.println("Escribe el valor de salida de la regla (letras y/o numeros)");
                 String salidaRule = scanner.next();
 
+                if(salidaRule.equals("NULL")){
+                    salidaRule = "";
+                }
+
                 for (int i = 0; i < salidaRule.length(); i++) {
                     char salidaChar = salidaRule.charAt(i);
                     if(!(vocabularioRegla.getConjuntoVocabulario().contains(salidaChar))){

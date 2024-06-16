@@ -9,8 +9,9 @@ public class Vocabulario {
     HashSet<Character> conjuntoVocabulario;
 
     //constructor
-    public Vocabulario(){
+    public Vocabulario(char inicial){
         conjuntoVocabulario = new HashSet<Character>();
+        conjuntoVocabulario.add(inicial);
     }
 
     //metodo get para retornar el vocabulario
@@ -67,6 +68,10 @@ public class Vocabulario {
 
                 if(letra.equals("*")){
                     break;
+                }
+                if(letra.equals("S")){
+                    System.out.println("No se puede eliminar el termino inicial");
+                    throw new Exception();
                 }
 
                 char charletra = letra.charAt(0);
