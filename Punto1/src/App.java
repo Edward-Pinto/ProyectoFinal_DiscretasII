@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 import GramaticaItems.Grammar;
@@ -21,56 +22,75 @@ public class App {
 
     public static void crearFrases(int cantidad) {
         Grammar grammar = new Grammar(conjuntoReglas, terminales);
-        for (int i = 0; i < cantidad; i++) {
-            String frase = grammar.generate("S");
+        HashSet<String> frases = grammar.generateAll("S", cantidad);
+        for (String frase : frases) {
             System.out.println("Frase generada: " + frase);
         }
     }
 
-    public static boolean revisarFrase(String frase){
+    
+    public static boolean revisarFrase(String frase) {
+        HashSet<String> visited = new HashSet<>();
+        return revisarFraseHelper(frase, visited);
+    }
 
-        for(ReglaProduccion regla : conjuntoReglas){
-        
-            if(frase.contains(regla.getOutRule())){
+    private static boolean revisarFraseHelper(String frase, HashSet<String> visited) {
+        if (visited.contains(frase)) {
+            return false;
+        }
+        visited.add(frase);
 
-                //Si la frase es igual a una regla inicial
-                
-                
-                if(regla.getOutRule().equals(frase)){
-                    if(regla.getintoRule() == "S".charAt(0)){
-                        return true; 
-                    }
-                }
-                frase = frase.replaceFirst(regla.getOutRule(), regla.getintoRule()+"");
-                if(revisarFrase(frase)){
+        // Caso base: si la frase es solo terminales y coincide con una regla de producción
+        if (isTerminal(frase)) {
+            for (ReglaProduccion regla : conjuntoReglas) {
+                if (regla.getOutRule().equals(frase) && regla.getintoRule().equals("S")) {
                     return true;
                 }
-            } 
-        } 
+            }
+            return false;
+        }
+
+        // Recursivamente intentar aplicar reglas de producción
+        for (ReglaProduccion regla : conjuntoReglas) {
+            if (frase.contains(regla.getintoRule())) {
+                String nuevaFrase = frase.replaceFirst(regla.getintoRule(), regla.getOutRule());
+                if (revisarFraseHelper(nuevaFrase, visited)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
+    private static boolean isTerminal(String frase) {
+        for (char ch : frase.toCharArray()) {
+            if (!terminales.getConjuntoTerminales().contains(ch)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-    //INGRESAR FRASE A REVISAR----------------------------------------------------------
-    public static void revisarMenu(){
-        try{
+    // Método para ingresar y revisar la frase desde el menú
+    public static void revisarMenu() {
+        try {
             System.out.println("Ingrese una frase (solo terminales)");
             Scanner scanner = new Scanner(System.in);
             String frase = scanner.nextLine();
             for (int i = 0; i < frase.length(); i++) {
                 char salidaChar = frase.charAt(i);
-                if(!(terminales.getConjuntoTerminales().contains(salidaChar))){
+                if (!terminales.getConjuntoTerminales().contains(salidaChar)) {
                     System.out.println("La frase contiene caracteres no terminales");
                     throw new Exception();
                 }
             }
-            if(revisarFrase(frase)){
-                System.out.println("La frase si pertenece a esa gramatica");
-            }else{
-                System.out.println("SIGUE MIRANDO CABRON");
+            if (revisarFrase(frase)) {
+                System.out.println("La frase sí pertenece a esa gramática");
+            } else {
+                System.out.println("La frase no pertenece a esa gramática");
             }
-        }catch(Exception e){
-            //
+        } catch (Exception e) {
+            System.out.println("Ocurrió un error: " + e.getMessage());
         }
     }
     //----------------------------------------------------------------------------------

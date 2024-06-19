@@ -17,8 +17,8 @@ public class ReglaProduccion {
         this.terminalesRegla = terminales;
     }
 
-    public char getintoRule() {
-        return intoRule;
+    public String getintoRule() {
+        return intoRule + "";
     }
 
     public String getOutRule() {
