@@ -870,11 +870,11 @@ public class MaquinaTintos {
                 switch (entrada) {
                     case "100":
                         saldoActual += 100;
-                        estadoActual = Estados.E25;
+                        estadoActual = Estados.E24;
                         break;
                     case "200":
                         saldoActual += 200;
-                        estadoActual = Estados.E26;
+                        estadoActual = Estados.E25;
                         break;
                     case "500":
                         saldoActual += 500;
