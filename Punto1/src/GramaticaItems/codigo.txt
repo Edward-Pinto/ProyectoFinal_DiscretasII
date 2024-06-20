@@ -1,0 +1,64 @@
+public static boolean revisarFrase(String frase) {
+        HashSet<String> visited = new HashSet<>();
+        return revisarFraseHelper(frase, visited);
+    }
+
+    private static boolean revisarFraseHelper(String frase, HashSet<String> visited) {
+        if (visited.contains(frase)) {
+            return false;
+        }
+        visited.add(frase);
+
+        // Caso base: si la frase es solo terminales y coincide con una regla de producción
+        if (isTerminal(frase)) {
+            for (ReglaProduccion regla : conjuntoReglas) {
+                if (regla.getOutRule().equals(frase) && regla.getintoRule().equals("S")) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Recursivamente intentar aplicar reglas de producción
+        for (ReglaProduccion regla : conjuntoReglas) {
+            if (frase.contains(regla.getintoRule())) {
+                String nuevaFrase = frase.replaceFirst(regla.getintoRule(), regla.getOutRule());
+                if (revisarFraseHelper(nuevaFrase, visited)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean isTerminal(String frase) {
+        for (char ch : frase.toCharArray()) {
+            if (!terminales.getConjuntoTerminales().contains(ch)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static void revisarMenu1() {
+        try {
+            System.out.println("Ingrese una frase (solo terminales)");
+            Scanner scanner = new Scanner(System.in);
+            String frase = scanner.nextLine();
+            for (int i = 0; i < frase.length(); i++) {
+                char salidaChar = frase.charAt(i);
+                if (!terminales.getConjuntoTerminales().contains(salidaChar)) {
+                    System.out.println("La frase contiene caracteres no terminales");
+                    throw new Exception();
+                }
+            }
+            if (revisarFrase(frase)) {
+                System.out.println("La frase sí pertenece a esa gramática");
+            } else {
+                System.out.println("La frase no pertenece a esa gramática");
+            }
+        } catch (Exception e) {
+            System.out.println("Ocurrió un error: " + e.getMessage());
+        }
+    }
+    //----------------------------------------------------------------------------------

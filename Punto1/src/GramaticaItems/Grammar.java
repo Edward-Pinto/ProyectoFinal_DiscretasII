@@ -10,7 +10,28 @@ public class Grammar {
         this.reglas = reglas;
         this.terminales = terminales;
     }
-
+    public HashSet<String> generateconjuntoResultados(String start, int limit) {
+        HashSet<String> results = new HashSet<>();
+        Queue<String> queue = new LinkedList<>();
+        queue.add(start);
+        String current = "";
+        while (!queue.isEmpty() && current.length() < limit) {
+            current = queue.poll();
+            
+            if (isTerminal(current)) {
+                results.add(current);
+            } else {
+                for (ReglaProduccion regla : reglas) {
+                    if (current.contains(regla.getintoRule())) {
+                        queue.add(current.replace(regla.getintoRule(), regla.getOutRule()));
+                    }
+                }
+            }
+        
+            
+        }
+        return results;
+    }
     public HashSet<String> generateAll(String start, int limit) {
         HashSet<String> results = new HashSet<>();
         Queue<String> queue = new LinkedList<>();
